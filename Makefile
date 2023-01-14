@@ -24,6 +24,10 @@ DEBUG = 1
 # optimization
 OPT = -Og
 
+#######################################
+# flashing variables
+#######################################
+FLASH_AREA := 0x08000000
 
 #######################################
 # paths
@@ -147,6 +151,11 @@ LIBS = -lc -lm -lnosys
 LIBDIR =
 LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
 
+ifeq ($(DEBUG), 1)
+LDFLAGS += -u _printf_float
+endif
+
+
 # default action: build all
 all: $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin
 
@@ -179,6 +188,12 @@ $(BUILD_DIR)/%.bin: $(BUILD_DIR)/%.elf | $(BUILD_DIR)
 
 $(BUILD_DIR):
 	mkdir $@
+
+#######################################
+#  flash
+#######################################
+flash:
+	st-flash --reset write $(BUILD_DIR)/$(TARGET).bin $(FLASH_AREA)
 
 #######################################
 # clean up
