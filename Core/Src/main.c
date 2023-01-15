@@ -93,9 +93,11 @@ int main(void)
 
   LSM6DS33_init(&imu);
 
-	// Start up message
-	sprintf((char *)buf, "I2C Comms\r\n");
-	HAL_UART_Transmit(&huart2, buf, strlen((char*)buf), HAL_MAX_DELAY);
+  TIM1->CCR1 = 50;
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+
+  // Function call for DMA -> PWM signal
+  // HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t *)pwmData, 11);
 
 	while (1)
 	{
