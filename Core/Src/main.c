@@ -61,13 +61,17 @@ static void MX_DMA_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_USART2_UART_Init(void);
+
 /* USER CODE BEGIN PFP */
+static void dshot_init();
+static void dshot_write();
+static void dshot_dma_tc_callback();
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint32_t pwmData[0] = {100};
+uint16_t pwmData[3] = {90, 45, 0};
 
 /* USER CODE END 0 */
 
@@ -109,13 +113,75 @@ int main(void)
   MX_TIM1_Init();
   MX_USART2_UART_Init();
 
-  // HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, &pwmData, 32);
-  
+  // PWM w/ DMA process
+  dshot_init();
+  // dshot_write();
+  // HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 
   /* Infinite loop */
   while (1)
   {
+  HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t *)pwmData, 3);
+  HAL_Delay(1);
   }
+}
+
+void dshot_init()
+{
+  // initialisation
+    // (1) set timers
+  // uint16_t psc;
+  // uint32_t sys_clock_speed = 72e3;
+
+  // psc = lrintf( (float)sys_clock_speed/12e3 + 0.01f) - 1;
+
+  // __HAL_TIM_SET_PRESCALER(&htim1, psc);
+  __HAL_TIM_SET_AUTORELOAD(&htim1, 120);
+
+    // (2) set DMA completion callback
+    // TODO
+    // htim1.hdma[TIM_DMA_CC1]->XferCpltCallback = dshot_dma_tc_callback;
+
+    // (3) start the PWM signald
+    // HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+}
+
+static void dshot_dma_tc_callback(DMA_HandleTypeDef *hdma)
+{
+	TIM_HandleTypeDef *htim = (TIM_HandleTypeDef *)((DMA_HandleTypeDef *)hdma)->Parent;
+
+	if (hdma == htim->hdma[TIM_DMA_ID_CC1])
+	{
+		__HAL_TIM_DISABLE_DMA(htim, TIM_DMA_CC1);
+	}
+	else if(hdma == htim->hdma[TIM_DMA_ID_CC2])
+	{
+		__HAL_TIM_DISABLE_DMA(htim, TIM_DMA_CC2);
+	}
+	else if(hdma == htim->hdma[TIM_DMA_ID_CC3])
+	{
+		__HAL_TIM_DISABLE_DMA(htim, TIM_DMA_CC3);
+	}
+	else if(hdma == htim->hdma[TIM_DMA_ID_CC4])
+	{
+		__HAL_TIM_DISABLE_DMA(htim, TIM_DMA_CC4);
+	}
+}
+
+static void dshot_write()
+{
+  // write
+    // (1) prepare the DMA buffer
+  // pwmData[0] = 90;
+
+    // (2) start the DMA
+
+  // HAL_DMA_Start(htim1.hdma[TIM_DMA_ID_CC1], (uint32_t)pwmData, (uint32_t)&htim1.Instance->CCR1, 2);
+  HAL_DMA_Start(&hdma_tim1_ch1, (uint32_t)pwmData, (uint32_t)&htim1.Instance->CCR1, 2);
+
+    // (3) enable DMA requests
+  __HAL_TIM_ENABLE_DMA(&htim1, TIM_DMA_CC1);
+
 }
 
 /**
