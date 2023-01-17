@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "LSM6DS33_drivers.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -76,8 +77,22 @@ static void MX_USART2_UART_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+	LSM6DS33_TypeDef imu;
+	imu.i2c = &hi2c1;
+	imu.uart = &huart2;
 
-  /* USER CODE END 1 */
+	imu.orientation[0] = 0.0;
+	imu.orientation[1] = 0.0;
+	imu.orientation[2] = 0.0;
+
+	// configurations for the complementary filter
+	float tau = 0.1;
+	imu.dt = 0.05;
+	imu.alpha = tau/(tau+imu.dt);
+
+	// I2C buffer and status variables
+	HAL_StatusTypeDef ret;
+	uint8_t buf[256];
 
   /* MCU Configuration--------------------------------------------------------*/
 
