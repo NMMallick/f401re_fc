@@ -18,25 +18,40 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include <string.h>
-#include <stdio.h>
-#include <math.h>
 
-#include "LSM6DS33_drivers.h"
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
+
+/* USER CODE END Includes */
+
+/* Private typedef -----------------------------------------------------------*/
+/* USER CODE BEGIN PTD */
+
+/* USER CODE END PTD */
+
+/* Private define ------------------------------------------------------------*/
+/* USER CODE BEGIN PD */
+/* USER CODE END PD */
+
+/* Private macro -------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
 I2C_HandleTypeDef hi2c1;
 
 TIM_HandleTypeDef htim1;
 DMA_HandleTypeDef hdma_tim1_ch1;
+DMA_HandleTypeDef hdma_tim1_ch2;
+DMA_HandleTypeDef hdma_tim1_ch3;
+DMA_HandleTypeDef hdma_tim1_ch4_trig_com;
 
 UART_HandleTypeDef huart2;
 
-// @brief These are functions to be tested in the main file and then
-//			eventually ported to its on library
-// Test function protocols
-void updateOrientation(LSM6DS33_TypeDef*);
+/* USER CODE BEGIN PV */
 
+/* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -60,29 +75,25 @@ static void MX_USART2_UART_Init(void);
   */
 int main(void)
 {
-  // LSM6DS33 Handler
-	LSM6DS33_TypeDef imu;
-	imu.i2c = &hi2c1;
-	imu.uart = &huart2;
+  /* USER CODE BEGIN 1 */
 
-	imu.orientation[0] = 0.0;
-	imu.orientation[1] = 0.0;
-	imu.orientation[2] = 0.0;
+  /* USER CODE END 1 */
 
-	// configurations for the complementary filter
-	float tau = 0.1;
-	imu.dt = 0.05;
-	imu.alpha = tau/(tau+imu.dt);
-
-	// I2C buffer and status variables
-	HAL_StatusTypeDef ret;
-	uint8_t buf[256];
+  /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
+  /* USER CODE BEGIN Init */
+
+  /* USER CODE END Init */
+
   /* Configure the system clock */
   SystemClock_Config();
+
+  /* USER CODE BEGIN SysInit */
+
+  /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
@@ -90,65 +101,19 @@ int main(void)
   MX_I2C1_Init();
   MX_TIM1_Init();
   MX_USART2_UART_Init();
+  /* USER CODE BEGIN 2 */
 
-  LSM6DS33_init(&imu);
+  /* USER CODE END 2 */
 
-  TIM1->CCR1 = 50;
-  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
+  while (1)
+  {
+    /* USER CODE END WHILE */
 
-  // Function call for DMA -> PWM signal
-  // HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t *)pwmData, 11);
-
-	while (1)
-	{
-		LSM6DS33_I2C_acc_raw(&imu);
-		LSM6DS33_I2C_gyro_raw(&imu);
-		updateOrientation(&imu);
-
-//		sprintf((char*)buf,
-//				"(XL)- x:%f\ty:%f\tz:%f\r\n(G) - x:%f\ty:%f\tz:%f\r\n",
-//				imu.acc_data[0], imu.acc_data[1], imu.acc_data[2],
-//				imu.gyro_data[0], imu.gyro_data[1], imu.gyro_data[2]);
-
-		sprintf((char*)buf, "X:%f\tY:%f\tZ:%f\r\n",
-				imu.orientation[0],
-				imu.orientation[1],
-				imu.orientation[2]);
-
-		HAL_UART_Transmit(&huart2, buf, strlen((char*)buf), HAL_MAX_DELAY);
-		// Delay
-		HAL_Delay(imu.dt*1000);
-	}
-
-	return 0;
-}
-
-void updateOrientation(LSM6DS33_TypeDef *dtype)
-{
-	float ax, ay, az;
-	float gx, gy, gz;
-
-	// pitch
-	ax = atan(dtype->acc_data[0]/sqrt(pow(dtype->acc_data[1],2) + pow(dtype->acc_data[2], 2)))*(180/M_PI);
-	gx = dtype->gyro_data[0]*dtype->dt;
-
-	// roll
-	ay = atan(dtype->acc_data[1]/sqrt(pow(dtype->acc_data[0], 2) + pow(dtype->acc_data[2], 2)))*(180/M_PI);
-	gy = dtype->gyro_data[1]*dtype->dt;
-
-	// yaw
-	az = atan(dtype->acc_data[2]/sqrt(pow(dtype->acc_data[0], 2) + pow(dtype->acc_data[1], 2)))*(180/M_PI);
-	gz = dtype->gyro_data[2]*dtype->dt;
-
-
-	// pitch
-	dtype->orientation[0] = (1-dtype->alpha)*(dtype->orientation[0] + gx) + (dtype->alpha)*ax;
-
-	//roll
-	dtype->orientation[1] = (1-dtype->alpha)*(dtype->orientation[1] + gy) + (dtype->alpha)*ay;
-
-	// yaw
-	dtype->orientation[2] = (1-dtype->alpha)*(dtype->orientation[2] + gz) + (dtype->alpha)*az;
+    /* USER CODE BEGIN 3 */
+  }
+  /* USER CODE END 3 */
 }
 
 /**
@@ -363,6 +328,15 @@ static void MX_DMA_Init(void)
   /* DMA2_Stream1_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA2_Stream1_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
+  /* DMA2_Stream2_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA2_Stream2_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Stream2_IRQn);
+  /* DMA2_Stream4_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA2_Stream4_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Stream4_IRQn);
+  /* DMA2_Stream6_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA2_Stream6_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Stream6_IRQn);
 
 }
 

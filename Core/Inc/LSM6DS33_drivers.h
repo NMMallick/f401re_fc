@@ -9,6 +9,7 @@
 #define INC_LSM6DS33_DRIVERS_H_
 
 #include "stm32f4xx_hal.h"
+#include <math.h>
 
 // LSM6DS33
 #define LSM6DS33_WHOAMI 0x69
@@ -54,5 +55,6 @@ void LSM6DS33_init();
 void LSM6DS33_I2C_acc_raw(LSM6DS33_TypeDef *);
 void LSM6DS33_I2C_gyro_raw(LSM6DS33_TypeDef *);
 float convert_buf(char*, float);
+void updateOrientation(LSM6DS33_TypeDef*);
 
 #endif /* INC_LSM6DS33_DRIVERS_H_ */

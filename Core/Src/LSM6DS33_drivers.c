@@ -9,6 +9,7 @@
 
 /**
  * @brief Initialization function for the LSM6DS33 IMU
+ * @param Type definition holding information from the LSM6DS33 imu-
  * */
 void LSM6DS33_init(LSM6DS33_TypeDef *dtype)
 {
@@ -46,7 +47,7 @@ void LSM6DS33_init(LSM6DS33_TypeDef *dtype)
 
 /**
  * @brief Reads the raw accelerometer data from an LSM6DS33
- * @param Float values containing x,y,z accelerometer data
+ * @param Type definition holding information from the LSM6DS33 imu
  * */
 void LSM6DS33_I2C_acc_raw(LSM6DS33_TypeDef *dtype)
 {
@@ -77,6 +78,10 @@ void LSM6DS33_I2C_acc_raw(LSM6DS33_TypeDef *dtype)
 		dtype->acc_data[2] = convert_buf(buf, conv);
 }
 
+/**
+ * @brief Reads the raw gyroscope data from the LSM6DS33 IMU
+ * @param Type definition holding information from the LSM6DS33 imu
+ */
 void LSM6DS33_I2C_gyro_raw(LSM6DS33_TypeDef *dtype)
 {
 	// HAL status data type
@@ -107,6 +112,30 @@ void LSM6DS33_I2C_gyro_raw(LSM6DS33_TypeDef *dtype)
 	ret = HAL_I2C_Mem_Read(dtype->i2c, LSM6DS33_ADDR << 1, GYRO_Z_L, I2C_MEMADD_SIZE_8BIT, buf, 2, HAL_MAX_DELAY);
 	if (ret == HAL_OK)
 		dtype->gyro_data[2] = convert_buf(buf, conv);
+}
+
+/**
+ * @brief Updates the orientation based on a complementary filter implementation
+ * @param Type definition holding information from the LSM6DS33 imu
+ */
+void updateOrientation(LSM6DS33_TypeDef *dtype)
+{
+	float ax, ay,
+		  gx, gy;
+
+	// pitch
+	ax = atan(dtype->acc_data[0]/sqrt(pow(dtype->acc_data[1],2) + pow(dtype->acc_data[2], 2)))*(180/M_PI);
+	gx = dtype->gyro_data[0]*dtype->dt;
+
+	// roll
+	ay = atan(dtype->acc_data[1]/sqrt(pow(dtype->acc_data[0], 2) + pow(dtype->acc_data[2], 2)))*(180/M_PI);
+	gy = dtype->gyro_data[1]*dtype->dt;
+
+	// pitch
+	dtype->orientation[0] = (1-dtype->alpha)*(dtype->orientation[0] + gx) + (dtype->alpha)*ax;
+
+	//roll
+	dtype->orientation[1] = (1-dtype->alpha)*(dtype->orientation[1] + gy) + (dtype->alpha)*ay;
 }
 
 /**
