@@ -67,6 +67,7 @@ static void MX_USART2_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+uint32_t pwmData[0] = {100};
 
 /* USER CODE END 0 */
 
@@ -107,6 +108,9 @@ int main(void)
   MX_I2C1_Init();
   MX_TIM1_Init();
   MX_USART2_UART_Init();
+
+  // HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, &pwmData, 32);
+  
 
   /* Infinite loop */
   while (1)
