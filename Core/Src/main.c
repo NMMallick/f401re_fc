@@ -71,7 +71,14 @@ static void dshot_dma_tc_callback();
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint16_t pwmData[3] = {90, 45, 0};
+#define MAX_THROTTLE 48
+#define MIN_THROTTLE 2047
+
+#define DSHOT_O 45
+#define DSHOT_1 90
+#define PWM_LOW 0
+
+uint16_t pwmData[17];
 
 /* USER CODE END 0 */
 
@@ -119,10 +126,9 @@ int main(void)
   // HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 
   /* Infinite loop */
+    HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t *)pwmData, 3);
   while (1)
   {
-  HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t *)pwmData, 3);
-  HAL_Delay(1);
   }
 }
 
