@@ -67,6 +67,7 @@ static void dshot_init();
 static void dshot_write();
 static void dshot_dma_tc_callback();
 static void command_esc(uint16_t);
+static void arm_esc();
 
 /* USER CODE END PFP */
 
@@ -79,7 +80,7 @@ static void command_esc(uint16_t);
 #define DSHOT_1 90
 #define PWM_LOW 0
 
-uint16_t pwmData[17];
+uint16_t pwmData[18];
 
 /* USER CODE END 0 */
 
@@ -108,6 +109,7 @@ int main(void)
 	// uint8_t buf[256];
 
   pwmData[16] = 0;
+  // pwmData[17] = 0;
 
   /* MCU Configuration--------------------------------------------------------*/
 
@@ -126,33 +128,64 @@ int main(void)
 
   // PWM w/ DMA process
   dshot_init();
-  // dshot_write();
-  // HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 
   /* Infinite loop */
-  command_esc(49);
-  HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t *)pwmData, 3);
+  arm_esc();
+
+  uint16_t speed = 150;
+
   while (1)
   {
+      command_esc(speed);
+      HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t *)pwmData, 17);
+      HAL_Delay(10);
+
+    // speed = 48;
+    // while (speed < 2048)
+    // {
+    //   command_esc(speed);
+    //   HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t *)pwmData, 17);
+    //   HAL_Delay(10);
+    //   speed += 5;
+    // }
+    // speed = 2048;
+    // while (speed > 48)
+    // {
+    //   command_esc(speed);
+    //   HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t *)pwmData, 17);
+    //   HAL_Delay(10);
+    //   speed -= 5;
+    // }
   }
 }
 
 void command_esc(uint16_t speed)
 {
   // Check the speed is within the min,max range
-  if (speed < MIN_THROTTLE || speed > MAX_THROTTLE)
-    return;
+  // if (speed < MIN_THROTTLE || speed > MAX_THROTTLE)
+  //   return;
 
-  speed = (speed << 1) | 0x01;
-
-  uint8_t crc = (speed ^ (speed >> 4) & (speed >> 8)) & 0x0f;
-
+  speed = (speed << 1) & 0xfffe;
+  uint8_t crc = (speed ^ (speed >> 4) ^ (speed >> 8)) & 0x0f;
   uint16_t data = (speed << 4) | crc;
 
   for (int i = 15; i >= 0; i--)
   {
     pwmData[i] = (data & 0x01) ? DSHOT_1 : DSHOT_O;
-    data >>= 1;
+    data = data >> 1;
+  }
+}
+
+void arm_esc()
+{
+  uint32_t millis = HAL_GetTick();
+
+  while ((HAL_GetTick() - millis) < 300)
+  {
+    // strcpy((char *)buf, "yo");
+    // HAL_UART_Transmit(&huart2, buf, strlen((char*)buf), HAL_MAX_DELAY);
+    command_esc(0);
+    HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t *)pwmData, 17);
   }
 }
 
