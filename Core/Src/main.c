@@ -66,6 +66,7 @@ static void MX_USART2_UART_Init(void);
 static void dshot_init();
 static void dshot_write();
 static void dshot_dma_tc_callback();
+static void command_esc();
 
 /* USER CODE END PFP */
 
@@ -103,8 +104,11 @@ int main(void)
 	imu.alpha = tau/(tau+imu.dt);
 
 	// I2C buffer and status variables
-	HAL_StatusTypeDef ret;
-	uint8_t buf[256];
+	// HAL_StatusTypeDef ret;
+	// uint8_t buf[256];
+
+  pwmData[16] = 0;
+
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
@@ -132,24 +136,29 @@ int main(void)
   }
 }
 
+void command_esc(uint16_t speed)
+{
+  // Check the speed is within the min,max range
+  if (speed < MIN_THROTTLE || speed > MAX_THROTTLE)
+    return;
+
+  speed = (speed << 1) | 0x01;
+
+  uint8_t crc = (speed ^ (speed >> 4) & (speed >> 8)) & 0x0f;
+
+  uint16_t data = (speed << 4) | crc;
+
+  for (int i = 15; i >= 0; i--)
+  {
+    pwmData[i] = (data & 0x01) ? DSHOT_1 : DSHOT_O;
+    data >>= 1;
+  }
+}
+
 void dshot_init()
 {
-  // initialisation
-    // (1) set timers
-  // uint16_t psc;
-  // uint32_t sys_clock_speed = 72e3;
-
-  // psc = lrintf( (float)sys_clock_speed/12e3 + 0.01f) - 1;
-
   // __HAL_TIM_SET_PRESCALER(&htim1, psc);
   __HAL_TIM_SET_AUTORELOAD(&htim1, 120);
-
-    // (2) set DMA completion callback
-    // TODO
-    // htim1.hdma[TIM_DMA_CC1]->XferCpltCallback = dshot_dma_tc_callback;
-
-    // (3) start the PWM signald
-    // HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 }
 
 static void dshot_dma_tc_callback(DMA_HandleTypeDef *hdma)
