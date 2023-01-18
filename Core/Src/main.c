@@ -66,7 +66,7 @@ static void MX_USART2_UART_Init(void);
 static void dshot_init();
 static void dshot_write();
 static void dshot_dma_tc_callback();
-static void command_esc();
+static void command_esc(uint16_t);
 
 /* USER CODE END PFP */
 
@@ -130,7 +130,8 @@ int main(void)
   // HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 
   /* Infinite loop */
-    HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t *)pwmData, 3);
+  command_esc(49);
+  HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t *)pwmData, 3);
   while (1)
   {
   }
