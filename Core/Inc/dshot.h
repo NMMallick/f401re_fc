@@ -7,6 +7,7 @@
 // MACROS
 #define DSHOT_0 89
 #define DSHOT_1 180
+
 #define ARR 240 // 3.33 uS bit length (DSHOT)
 #define ARM_TIME 2500
 
@@ -18,20 +19,19 @@
 TIM_HandleTypeDef *PWM_TIM;
 
 // Constants
-static void MAX_THROTTLE = 2047;
-static void MIN_THROTTLE = 48;
+const static uint16_t MAX_THROTTLE = 2047;
+const static uint16_t MIN_THROTTLE = 48;
 
 static uint16_t MOTOR_BUF_1[18];
 static uint16_t MOTOR_BUF_2[18];
 static uint16_t MOTOR_BUF_3[18];
 static uint16_t MOTOR_BUF_4[18];
 
-
 /**
  * @brief Initializing the timing and packet buffer for the dshot protocol
  * @param Type def for the STM32f401 timer
  */
-void DSHOT_init(TIM_HandleTypeDef tim);
+void DSHOT_init(TIM_HandleTypeDef &tim);
 
 /**
  * @brief Arming sequence for the BHEli_S ESC

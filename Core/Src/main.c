@@ -99,9 +99,6 @@ int main(void)
 	// HAL_StatusTypeDef ret;
 	// uint8_t buf[256];
 
-  pwmData[16] = 0;
-  pwmData[17] = 0;
-
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
@@ -121,14 +118,10 @@ int main(void)
   dshot_init();
 
   /* Infinite loop */
-  arm_esc();
-  uint16_t speed = MAX_THROTTLE;
+
 
   while (1)
   {
-      command_esc(speed);
-      HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t *)pwmData, 17);
-      HAL_Delay(1);
     // command_esc(0);
   //   speed = MIN_THROTTLE;
   //   while (speed < MAX_THROTTLE)
