@@ -79,19 +79,19 @@ void DSHOT_command_motor(Motor_Type motor, uint16_t val)
     switch (motor)
     {
         case MOTOR_1:
-            DSHOT_create_packet(val, &MOTOR_BUF_1);
+            DSHOT_create_packet(val, (uint16_t *)MOTOR_BUF_1);
             HAL_TIM_PWM_Start_DMA(PWM_TIM, MOTOR_PWM_CHANNEL_1, (uint32_t *)MOTOR_BUF_1, 17);
             break;
         case MOTOR_2:
-            DSHOT_create_packet(val, &MOTOR_BUF_2);
+            DSHOT_create_packet(val, (uint16_t *)MOTOR_BUF_2);
             HAL_TIM_PWM_Start_DMA(PWM_TIM, MOTOR_PWM_CHANNEL_2, (uint32_t *)MOTOR_BUF_2, 17);
             break;
         case MOTOR_3:
-            DSHOT_create_packet(val, &MOTOR_BUF_3);
+            DSHOT_create_packet(val, (uint16_t *)MOTOR_BUF_3);
             HAL_TIM_PWM_Start_DMA(PWM_TIM, MOTOR_PWM_CHANNEL_3, (uint32_t *)MOTOR_BUF_3, 17);
             break;
         case MOTOR_4:
-            DSHOT_create_packet(val, &MOTOR_BUF_4);
+            DSHOT_create_packet(val, (uint16_t *)MOTOR_BUF_4);
             HAL_TIM_PWM_Start_DMA(PWM_TIM, MOTOR_PWM_CHANNEL_4, (uint32_t *)MOTOR_BUF_4, 17);
             break;
         default:
