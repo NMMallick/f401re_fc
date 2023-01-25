@@ -1,10 +1,10 @@
 #include "dshot.h"
 
 //
-void DSHOT_init(TIM_HandleTypeDef &tim)
+void DSHOT_init(TIM_HandleTypeDef *tim)
 {
     // Set auto reload value for 3.33uS
-    __HAL_TIM_SET_AUTORELOAD(&tim, ARR);
+    __HAL_TIM_SET_AUTORELOAD(tim, (uint32_t)DSHOT300_ARR);
 
     // Set the end of the packet/buffer to always have 4 bytes of 0
     MOTOR_BUF_1[16] = 0x0000;
@@ -20,7 +20,7 @@ void DSHOT_init(TIM_HandleTypeDef &tim)
     MOTOR_BUF_4[17] = 0x0000;
 
     // Save the timer
-    PWM = tim;
+    PWM_TIM = tim;
 }
 
 void DSHOT_arm()
@@ -55,7 +55,7 @@ void DSHOT_create_packet(uint16_t val)
     //  value of each bit in data
     for (int i = 15; i >= 0; i--)
     {
-        MOTOR_BUF_1[i] = (data & 0x01) ? DSHOT_1 : DSHOT_O;
+        MOTOR_BUF_1[i] = (data & 0x01) ? DSHOT_1 : DSHOT_0;
         data = data >> 1;
     }
 }

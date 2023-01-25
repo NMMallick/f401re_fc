@@ -18,11 +18,11 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "LSM6DS33_drivers.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "LSM6DS33_drivers.h"
+#include "dshot.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -61,13 +61,8 @@ static void MX_DMA_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_USART2_UART_Init(void);
-
 /* USER CODE BEGIN PFP */
-// static void dshot_init();
-// static void dshot_write();
-// static void dshot_dma_tc_callback();
-// static void command_esc(uint16_t);
-// static void arm_esc();
+
 
 /* USER CODE END PFP */
 
@@ -82,30 +77,25 @@ static void MX_USART2_UART_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	LSM6DS33_TypeDef imu;
-	imu.i2c = &hi2c1;
-	imu.uart = &huart2;
 
-	imu.orientation[0] = 0.0;
-	imu.orientation[1] = 0.0;
-	imu.orientation[2] = 0.0;
-
-	// configurations for the complementary filter
-	float tau = 0.1;
-	imu.dt = 0.05;
-	imu.alpha = tau/(tau+imu.dt);
-
-	// I2C buffer and status variables
-	// HAL_StatusTypeDef ret;
-	// uint8_t buf[256];
+  /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
+  /* USER CODE BEGIN Init */
+  DSHOT_init(&htim1);
+  LSM6DS33_init();
+  /* USER CODE END Init */
+
   /* Configure the system clock */
   SystemClock_Config();
+
+  /* USER CODE BEGIN SysInit */
+
+  /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
@@ -113,33 +103,19 @@ int main(void)
   MX_I2C1_Init();
   MX_TIM1_Init();
   MX_USART2_UART_Init();
+  /* USER CODE BEGIN 2 */
 
-  // PWM w/ DMA process
-  dshot_init();
+  /* USER CODE END 2 */
 
   /* Infinite loop */
-
-
+  /* USER CODE BEGIN WHILE */
   while (1)
   {
-    // command_esc(0);
-  //   speed = MIN_THROTTLE;
-  //   while (speed < MAX_THROTTLE)
-  //   {
-  //     command_esc(speed);
-  //     HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t *)pwmData, 17);
-  //     HAL_Delay(10);
-  //     speed += 5;
-  //   }
-  //   speed = MAX_THROTTLE;
-  //   while (speed > MIN_THROTTLE)
-  //   {
-  //     command_esc(speed);
-  //     HAL_TIM_PWM_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t *)pwmData, 17);
-  //     HAL_Delay(10);
-  //     speed -= 5;
-  //   }
+    /* USER CODE END WHILE */
+
+    /* USER CODE BEGIN 3 */
   }
+  /* USER CODE END 3 */
 }
 
 /**
