@@ -11,10 +11,17 @@
 #define DSHOT300_ARR 240 // 3.33 uS bit length (DSHOT)
 #define ARM_TIME 2500
 
-#define MOTOR_1 TIM_CHANNEL_1
-#define MOTOR_2 TIM_CHANNEL_2
-#define MOTOR_3 TIM_CHANNEL_3
-#define MOTOR_4 TIM_CHANNEL_4
+#define MOTOR_PWM_CHANNEL_1 TIM_CHANNEL_1
+#define MOTOR_PWM_CHANNEL_2 TIM_CHANNEL_2
+#define MOTOR_PWM_CHANNEL_3 TIM_CHANNEL_3
+#define MOTOR_PWM_CHANNEL_4 TIM_CHANNEL_4
+
+typedef enum Motor_EnumTypeDef {
+    MOTOR_1 = 0,
+    MOTOR_2,
+    MOTOR_3,
+    MOTOR_4
+} Motor_Type;
 
 TIM_HandleTypeDef *PWM_TIM;
 
@@ -45,12 +52,13 @@ void DSHOT_arm();
  * @param the throttle value to be sent to the ESC
  * @note val is clamped at THROTTLE_MIN and THROTTLE_MAX
  */
-void DSHOT_create_packet(uint16_t val);
+void DSHOT_create_packet(uint16_t val, uint16_t *buf);
 
 /**
  * @brief Read from DMA and create the PWM signal
- * @param Type def for the STM32f401 timer
+ * @param motor Motor type def to determine which PWM channel to send data to
+ * @param val Throttle value to be sent to the ESC/motor
  */
-void DSHOT_write();
+void DSHOT_command_motor(Motor_Type motor, uint16_t val);
 
 #endif

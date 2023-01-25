@@ -111,8 +111,9 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    DSHOT_command_motor(MOTOR_1, 100):
+    HAL_Delay(10);
     /* USER CODE END WHILE */
-
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
