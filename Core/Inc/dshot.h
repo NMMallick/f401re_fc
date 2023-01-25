@@ -44,7 +44,7 @@ void DSHOT_init(TIM_HandleTypeDef *tim);
  * @brief Arming sequence for the BHEli_S ESC
  *
  */
-void DSHOT_arm(TIM_HandleTypeDef *tim);
+void DSHOT_arm();
 
 /**
  * @brief Create a packet of buffer data that prescribes todo

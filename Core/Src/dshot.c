@@ -23,25 +23,28 @@ void DSHOT_init(TIM_HandleTypeDef *tim)
     PWM_TIM = tim;
 }
 
-void DSHOT_arm(TIM_HandleTypeDef *tim)
+void DSHOT_arm()
 {
     uint32_t millis = HAL_GetTick();
 
     DSHOT_create_packet(0, (uint16_t *)MOTOR_BUF_1);
+    // DSHOT_create_packet(0, (uint16_t *)MOTOR_BUF_2);
+    // DSHOT_create_packet(0, (uint16_t *)MOTOR_BUF_3);
+    // DSHOT_create_packet(0, (uint16_t *)MOTOR_BUF_4);
 
+
+    // HAL_TIM_PWM_Start_DMA(PWM_TIM, MOTOR_PWM_CHANNEL_2, (uint32_t *)MOTOR_BUF_2, 17);
+    // HAL_TIM_PWM_Start_DMA(PWM_TIM, MOTOR_PWM_CHANNEL_3, (uint32_t *)MOTOR_BUF_3, 17);
+    // HAL_TIM_PWM_Start_DMA(PWM_TIM, MOTOR_PWM_CHANNEL_4, (uint32_t *)MOTOR_BUF_4, 17);
+
+    HAL_TIM_PWM_Start_DMA(PWM_TIM, MOTOR_PWM_CHANNEL_1, (uint32_t *)MOTOR_BUF_1, 17);
     while ((HAL_GetTick() - millis) < 2500)
     {
-        // DSHOT_create_packet(0, (uint16_t *)MOTOR_BUF_2);
-        // DSHOT_create_packet(0, (uint16_t *)MOTOR_BUF_3);
-        // DSHOT_create_packet(0, (uint16_t *)MOTOR_BUF_4);
-
-        HAL_TIM_PWM_Start_DMA(tim, TIM_CHANNEL_1, (uint32_t *)MOTOR_BUF_1, 17);
-        // HAL_TIM_PWM_Start_DMA(PWM_TIM, MOTOR_PWM_CHANNEL_1, (uint32_t *)MOTOR_BUF_2, 17);
-        // HAL_TIM_PWM_Start_DMA(PWM_TIM, MOTOR_PWM_CHANNEL_1, (uint32_t *)MOTOR_BUF_3, 17);
-        // HAL_TIM_PWM_Start_DMA(PWM_TIM, MOTOR_PWM_CHANNEL_1, (uint32_t *)MOTOR_BUF_4, 17);
-
+        // HAL_TIM_PWM_Stop_DMA(PWM_TIM, MOTOR_PWM_CHANNEL_1);
         HAL_Delay(10);
     }
+
+    // HAL_TIM_PWM_Stop_DMA(PWM_TIM, MOTOR_PWM_CHANNEL_1);
 }
 
 void DSHOT_create_packet(uint16_t val, uint16_t *buf)
@@ -62,7 +65,7 @@ void DSHOT_create_packet(uint16_t val, uint16_t *buf)
     //  value of each bit in data
     for (int i = 15; i >= 0; i--)
     {
-        MOTOR_BUF_1[i] = (data & 0x01) ? DSHOT_1 : DSHOT_0;
+        buf[i] = (data & 0x01) ? DSHOT_1 : DSHOT_0;
         data = data >> 1;
     }
 }
