@@ -1,7 +1,7 @@
 #include "dshot.h"
 
 //
-void DSHOT_init(TIM_HandleTypeDef tim)
+void DSHOT_init(TIM_HandleTypeDef &tim)
 {
     // Set auto reload value for 3.33uS
     __HAL_TIM_SET_AUTORELOAD(&tim, ARR);
