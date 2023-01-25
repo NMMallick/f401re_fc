@@ -47,6 +47,10 @@ void DSHOT_arm()
     // HAL_TIM_PWM_Stop_DMA(PWM_TIM, MOTOR_PWM_CHANNEL_1);
 }
 
+void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim) 
+{
+}
+
 void DSHOT_create_packet(uint16_t val, uint16_t *buf)
 {
     // Disable telemetry bit
