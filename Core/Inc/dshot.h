@@ -9,7 +9,7 @@
 #define DSHOT_1 180
 
 #define DSHOT300_ARR 240 // 3.33 uS bit length (DSHOT)
-#define ARM_TIME 2500
+// #define ARM_TIME 2500
 
 #define MOTOR_PWM_CHANNEL_1 TIM_CHANNEL_1
 #define MOTOR_PWM_CHANNEL_2 TIM_CHANNEL_2
@@ -44,7 +44,7 @@ void DSHOT_init(TIM_HandleTypeDef *tim);
  * @brief Arming sequence for the BHEli_S ESC
  *
  */
-void DSHOT_arm();
+void DSHOT_arm(TIM_HandleTypeDef *tim);
 
 /**
  * @brief Create a packet of buffer data that prescribes todo
