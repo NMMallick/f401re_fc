@@ -83,6 +83,20 @@ static void MX_TIM5_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+  QuadMotor_HandleTypeDef quadmotors;
+
+  // Set timers
+  quadmotors.motors[0].tim = &htim2;
+  quadmotors.motors[0].channel = TIM_CHANNEL_3;
+
+  quadmotors.motors[1].tim = &htim3;
+  quadmotors.motors[1].channel = TIM_CHANNEL_4;
+
+  quadmotors.motors[2].tim = &htim4;
+  quadmotors.motors[2].channel = TIM_CHANNEL_1;
+
+  quadmotors.motors[3].tim = &htim5;
+  quadmotors.motors[3].channel = TIM_CHANNEL_2;
 
   /* USER CODE END 1 */
 
@@ -110,16 +124,16 @@ int main(void)
   MX_TIM4_Init();
   MX_TIM3_Init();
   MX_TIM5_Init();
+
   /* USER CODE BEGIN 2 */
-  DSHOT_init(&htim1);
-  DSHOT_arm(&htim1);
+  DSHOT_init(&quadmotors);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    DSHOT_command_motor(MOTOR_1, 100);
+    // DSHOT_command_motor(MOTOR_1, 100);
     HAL_Delay(10);
     /* USER CODE END WHILE */
 
