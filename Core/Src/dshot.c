@@ -1,33 +1,30 @@
 #include "dshot.h"
 
 //
-void DSHOT_init(TIM_HandleTypeDef *tim)
+void DSHOT_init()
 {
     // Set auto reload value for 3.33uS
     __HAL_TIM_SET_AUTORELOAD(tim, 240);
 
     // Set the end of the packet/buffer to always have 4 bytes of 0
-    MOTOR_BUF_1[16] = 0x00;
-    MOTOR_BUF_1[17] = 0x00;
+    MOTOR_1_BUF[16] = 0x00;
+    MOTOR_1_BUF[17] = 0x00;
 
-    MOTOR_BUF_2[16] = 0x00;
-    MOTOR_BUF_2[17] = 0x00;
+    MOTOR_2_BUF[16] = 0x00;
+    MOTOR_2_BUF[17] = 0x00;
 
-    MOTOR_BUF_3[16] = 0x00;
-    MOTOR_BUF_3[17] = 0x00;
+    MOTOR_3_BUF[16] = 0x00;
+    MOTOR_3_BUF[17] = 0x00;
 
-    MOTOR_BUF_4[16] = 0x00;
-    MOTOR_BUF_4[17] = 0x00;
-
-    // Save the timer
-    PWM_TIM = tim;
+    MOTOR_4_BUF[16] = 0x00;
+    MOTOR_4_BUF[17] = 0x00;
 }
 
 void DSHOT_arm()
 {
     uint32_t millis = HAL_GetTick();
 
-    DSHOT_create_packet(0, (uint16_t *)MOTOR_BUF_1);
+    DSHOT_create_packet(0, (uint16_t *)MOTOR_1_BUF);
     // DSHOT_create_packet(0, (uint16_t *)MOTOR_BUF_2);
     // DSHOT_create_packet(0, (uint16_t *)MOTOR_BUF_3);
     // DSHOT_create_packet(0, (uint16_t *)MOTOR_BUF_4);
@@ -37,18 +34,14 @@ void DSHOT_arm()
     // HAL_TIM_PWM_Start_DMA(PWM_TIM, MOTOR_PWM_CHANNEL_3, (uint32_t *)MOTOR_BUF_3, 17);
     // HAL_TIM_PWM_Start_DMA(PWM_TIM, MOTOR_PWM_CHANNEL_4, (uint32_t *)MOTOR_BUF_4, 17);
 
-    HAL_TIM_PWM_Start_DMA(PWM_TIM, MOTOR_PWM_CHANNEL_1, (uint32_t *)MOTOR_BUF_1, 17);
-    while ((HAL_GetTick() - millis) < 2500)
+    HAL_TIM_PWM_Start_DMA(MOTOR_1, MOTOR_1_CHANNEL, (uint32_t *)MOTOR_1_BUF, 17);
+    while ((HAL_GetTick() - millis) < ARM_TIME)
     {
         // HAL_TIM_PWM_Stop_DMA(PWM_TIM, MOTOR_PWM_CHANNEL_1);
         HAL_Delay(10);
     }
 
     // HAL_TIM_PWM_Stop_DMA(PWM_TIM, MOTOR_PWM_CHANNEL_1);
-}
-
-void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim) 
-{
 }
 
 void DSHOT_create_packet(uint16_t val, uint16_t *buf)

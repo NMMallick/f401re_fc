@@ -9,36 +9,42 @@
 #define DSHOT_1 180
 
 #define DSHOT300_ARR 240 // 3.33 uS bit length (DSHOT)
-// #define ARM_TIME 2500
+#define ARM_TIME 2500
 
-#define MOTOR_PWM_CHANNEL_1 TIM_CHANNEL_1
-#define MOTOR_PWM_CHANNEL_2 TIM_CHANNEL_2
-#define MOTOR_PWM_CHANNEL_3 TIM_CHANNEL_3
-#define MOTOR_PWM_CHANNEL_4 TIM_CHANNEL_4
+#define MOTOR_1_CHANNEL TIM_CHANNEL_3
+#define MOTOR_2_CHANNEL TIM_CHANNEL_4
+#define MOTOR_3_CHANNEL TIM_CHANNEL_1
+#define MOTOR_4_CHANNEL TIM_CHANNEL_2
 
-typedef enum Motor_EnumTypeDef {
-    MOTOR_1 = 0,
-    MOTOR_2,
-    MOTOR_3,
-    MOTOR_4
-} Motor_Type;
+// typedef enum Motor_EnumTypeDef {
+//     MOTOR_1 = 0,
+//     MOTOR_2,
+//     MOTOR_3,
+//     MOTOR_4
+// } Motor_Type;
 
-TIM_HandleTypeDef *PWM_TIM;
+typdef struct Motor_HandleTypeDef {
+    TIM_HandleTypeDef *tim;
+
+} Motor_Handle;
+
+typedef struct QuadMotor_TypeDef {
+    Motor
+} QuadMotorStruct;
 
 // Constants
 const static uint16_t MAX_THROTTLE = 2047;
 const static uint16_t MIN_THROTTLE = 48;
 
-static uint16_t MOTOR_BUF_1[18];
-static uint16_t MOTOR_BUF_2[18];
-static uint16_t MOTOR_BUF_3[18];
-static uint16_t MOTOR_BUF_4[18];
+static uint16_t MOTOR_1_BUF[18];
+static uint16_t MOTOR_2_BUF[18];
+static uint16_t MOTOR_3_BUF[18];
+static uint16_t MOTOR_4_BUF[18];
 
 /**
  * @brief Initializing the timing and packet buffer for the dshot protocol
- * @param Type def for the STM32f401 timer
  */
-void DSHOT_init(TIM_HandleTypeDef *tim);
+void DSHOT_init();
 
 /**
  * @brief Arming sequence for the BHEli_S ESC
