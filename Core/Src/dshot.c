@@ -27,23 +27,21 @@ void DSHOT_init(QuadMotor_HandleTypeDef *motors)
 
 void DSHOT_arm()
 {
+    DSHOT_create_packet(0, (uint16_t *)quad_motors->motors[0].buffer);
+    DSHOT_create_packet(0, (uint16_t *)quad_motors->motors[1].buffer);
+    DSHOT_create_packet(0, (uint16_t *)quad_motors->motors[2].buffer);
+    DSHOT_create_packet(0, (uint16_t *)quad_motors->motors[3].buffer);
+
     uint32_t millis = HAL_GetTick();
 
-    DSHOT_create_packet(0, (uint16_t *)quad_motors->motors[0].buffer);
-    // DSHOT_create_packet(0, (uint16_t *)MOTOR_BUF_2);
-    // DSHOT_create_packet(0, (uint16_t *)MOTOR_BUF_3);
-    // DSHOT_create_packet(0, (uint16_t *)MOTOR_BUF_4);
-
-
-    // HAL_TIM_PWM_Start_DMA(PWM_TIM, MOTOR_PWM_CHANNEL_2, (uint32_t *)MOTOR_BUF_2, 17);
-    // HAL_TIM_PWM_Start_DMA(PWM_TIM, MOTOR_PWM_CHANNEL_3, (uint32_t *)MOTOR_BUF_3, 17);
-    // HAL_TIM_PWM_Start_DMA(PWM_TIM, MOTOR_PWM_CHANNEL_4, (uint32_t *)MOTOR_BUF_4, 17);
-
-    while ((HAL_GetTick() - millis) < ARM_TIME)
+    while ((HAL_GetTick() - millis) < 3000)
     {
-        HAL_TIM_PWM_Start_DMA(quad_motors->motors[0].tim, quad_motors->motors[0].channel, (uint32_t *)quad_motors->motors[0].buffer, 17);
+        HAL_TIM_PWM_Start_DMA(quad_motors->motors[0].tim, quad_motors->motors[0].channel, (uint32_t *)quad_motors->motors[0].buffer, 18);
+        HAL_TIM_PWM_Start_DMA(quad_motors->motors[1].tim, quad_motors->motors[1].channel, (uint32_t *)quad_motors->motors[1].buffer, 18);
+        HAL_TIM_PWM_Start_DMA(quad_motors->motors[2].tim, quad_motors->motors[2].channel, (uint32_t *)quad_motors->motors[2].buffer, 18);
+        HAL_TIM_PWM_Start_DMA(quad_motors->motors[3].tim, quad_motors->motors[3].channel, (uint32_t *)quad_motors->motors[3].buffer, 18);
 
-        HAL_Delay(10);
+        HAL_Delay(1);
     }
 
     // HAL_TIM_PWM_Stop_DMA(PWM_TIM, MOTOR_PWM_CHANNEL_1);
