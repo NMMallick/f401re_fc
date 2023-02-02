@@ -27,15 +27,18 @@ void DSHOT_init(QuadMotor_HandleTypeDef *motors)
 
 void DSHOT_arm()
 {
+    // Creating packet info with throttle field value of 0x00
     DSHOT_create_packet(0, (uint16_t *)quad_motors->motors[0].buffer);
     DSHOT_create_packet(0, (uint16_t *)quad_motors->motors[1].buffer);
     DSHOT_create_packet(0, (uint16_t *)quad_motors->motors[2].buffer);
     DSHOT_create_packet(0, (uint16_t *)quad_motors->motors[3].buffer);
 
+    // We will send 0x00 to each ESC for about 3 seconds
     uint32_t millis = HAL_GetTick();
 
-    while ((HAL_GetTick() - millis) < 3000)
+    while ((HAL_GetTick() - millis) < ARM_TIME)
     {
+        // Start the DMA transmission to the PWM periphal
         HAL_TIM_PWM_Start_DMA(quad_motors->motors[0].tim, quad_motors->motors[0].channel, (uint32_t *)quad_motors->motors[0].buffer, 18);
         HAL_TIM_PWM_Start_DMA(quad_motors->motors[1].tim, quad_motors->motors[1].channel, (uint32_t *)quad_motors->motors[1].buffer, 18);
         HAL_TIM_PWM_Start_DMA(quad_motors->motors[2].tim, quad_motors->motors[2].channel, (uint32_t *)quad_motors->motors[2].buffer, 18);
@@ -43,8 +46,6 @@ void DSHOT_arm()
 
         HAL_Delay(1);
     }
-
-    // HAL_TIM_PWM_Stop_DMA(PWM_TIM, MOTOR_PWM_CHANNEL_1);
 }
 
 void DSHOT_create_packet(uint16_t val, uint16_t *buf)
@@ -79,6 +80,7 @@ void DSHOT_command_motor(Motor_HandleTypeDef *motor, uint16_t val)
     if (val > MAX_THROTTLE)
         val = MAX_THROTTLE;
 
+    // Create the packet and begin the tnansmission
     DSHOT_create_packet(val, (uint16_t *)motor->buffer);
     HAL_TIM_PWM_Start_DMA(motor->tim, motor->channel, (uint32_t *)motor->buffer, 17);
 }

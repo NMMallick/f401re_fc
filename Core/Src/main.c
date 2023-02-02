@@ -164,11 +164,7 @@ int main(void)
       }
       speed = MIN_THROTTLE;
     }
-    // DSHOT_command_motor(&(quadmotors.motors[0].tim), 150);
-    // DSHOT_command_motor(&(quadmotors.motors[1].tim), 150);
-    // DSHOT_command_motor(&(quadmotors.motors[2].tim), 150);
-    // DSHOT_command_motor(&(quadmotors.motors[3].tim), 150);
-
+  
     HAL_Delay(5);
     /* USER CODE END WHILE */
 
