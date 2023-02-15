@@ -16,6 +16,11 @@ typedef struct {
             rx_buf[256];
 } Offboard_TypeDef;
 
+typedef enum {
+    GOOD_TX = 0,
+    BAD_TX,
+} Offboard_RX_Enum;
+
 Offboard_TypeDef *offb_dtype;
 
 // What process do I want for initializing
