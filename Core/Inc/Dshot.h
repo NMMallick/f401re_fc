@@ -1,5 +1,5 @@
-#ifndef DSHOT_H
-#define DSHOT_H
+#ifndef DSHOT_H_
+#define DSHOT_H_
 
 // Using HAL libraries to write PWM through DMA
 #include "stm32f4xx_hal.h"
@@ -8,7 +8,7 @@
 #define DSHOT_0 89
 #define DSHOT_1 180
 
-#define DSHOT300_ARR 240 // 3.33 uS bit length (DSHOT)
+#define DSHOT300_ARR 240 // 3.33 uS bit length (DSHOT 300)
 #define ARM_TIME 3000
 
 #define MAX_BUFF_SIZE 16
@@ -16,6 +16,7 @@
 // Constants
 const static uint16_t MAX_THROTTLE = 2047;
 const static uint16_t MIN_THROTTLE = 48;
+
 
 /**
  * @brief Generic motor structure for a PWM interface

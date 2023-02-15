@@ -1,4 +1,4 @@
-#include "dshot.h"
+#include "Dshot.h"
 
 //
 void DSHOT_init(QuadMotor_HandleTypeDef *motors)

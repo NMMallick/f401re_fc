@@ -22,7 +22,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "LSM6DS33_drivers.h"
-#include "dshot.h"
+#include "Dshot.h"
+#include "Offboard.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -51,6 +52,8 @@ DMA_HandleTypeDef hdma_tim4_ch1;
 DMA_HandleTypeDef hdma_tim4_ch2;
 
 UART_HandleTypeDef huart2;
+DMA_HandleTypeDef hdma_usart2_tx;
+DMA_HandleTypeDef hdma_usart2_rx;
 
 /* USER CODE BEGIN PV */
 
@@ -66,8 +69,7 @@ static void MX_TIM2_Init(void);
 static void MX_TIM4_Init(void);
 static void MX_TIM3_Init(void);
 /* USER CODE BEGIN PFP */
-
-
+static void motorDance(QuadMotor_HandleTypeDef *);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -82,19 +84,20 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
   QuadMotor_HandleTypeDef quadmotors;
+  Offboard_TypeDef offb_dtype;
 
   // Set timers
   quadmotors.motors[0].tim = &htim3;
-  quadmotors.motors[0].channel = TIM_CHANNEL_3;
-
   quadmotors.motors[1].tim = &htim3;
-  quadmotors.motors[1].channel = TIM_CHANNEL_4;
-
   quadmotors.motors[2].tim = &htim4;
-  quadmotors.motors[2].channel = TIM_CHANNEL_1;
-
   quadmotors.motors[3].tim = &htim4;
+  quadmotors.motors[0].channel = TIM_CHANNEL_3;
+  quadmotors.motors[1].channel = TIM_CHANNEL_4;
+  quadmotors.motors[2].channel = TIM_CHANNEL_1;
   quadmotors.motors[3].channel = TIM_CHANNEL_2;
+
+  // Set UART handle for offboard lib to reach
+  offb_dtype.huart = &huart2;
 
   /* USER CODE END 1 */
 
@@ -123,10 +126,11 @@ int main(void)
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
 
-  HAL_Delay(100);
+  // HAL_Delay(100);
   DSHOT_init(&quadmotors);
   DSHOT_arm();
-  uint16_t speed = MIN_THROTTLE;
+
+  initiate_connection(&offb_dtype);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -134,38 +138,7 @@ int main(void)
   while (1)
   {
 
-    for (int i = 0; i < 4; i++)
-    {
-      while (speed < (MAX_THROTTLE/2))
-      {
-        for (int j = 0; j < 4; j++)
-        {
-          if (i == j)
-            DSHOT_command_motor(&(quadmotors.motors[j].tim), speed);
-          else
-            DSHOT_command_motor(&(quadmotors.motors[j].tim), MIN_THROTTLE);
-        }
-        speed += 5;
-        HAL_Delay(5);
-      }
-      speed = MAX_THROTTLE/2;
 
-      while (speed > MIN_THROTTLE)
-      {
-        for (int j = 0; j < 4; j++)
-        {
-          if (i == j)
-            DSHOT_command_motor(&(quadmotors.motors[j].tim), speed);
-          else
-            DSHOT_command_motor(&(quadmotors.motors[j].tim), MIN_THROTTLE);
-        }
-        speed -= 5;
-        HAL_Delay(5);
-      }
-      speed = MIN_THROTTLE;
-    }
-  
-    HAL_Delay(5);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -451,7 +424,6 @@ static void MX_USART2_UART_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN USART2_Init 2 */
-
   /* USER CODE END USART2_Init 2 */
 
 }
@@ -475,6 +447,12 @@ static void MX_DMA_Init(void)
   /* DMA1_Stream3_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Stream3_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream3_IRQn);
+  /* DMA1_Stream5_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream5_IRQn);
+  /* DMA1_Stream6_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream6_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream6_IRQn);
   /* DMA1_Stream7_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Stream7_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream7_IRQn);
@@ -515,7 +493,52 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+static void motorDance(QuadMotor_HandleTypeDef *quadmotors)
+{
+  uint16_t speed = MIN_THROTTLE;
+  for (int i = 0; i < 4; i++)
+    {
+      while (speed < (MAX_THROTTLE/2))
+      {
+        for (int j = 0; j < 4; j++)
+        {
+          if (i == j)
+            DSHOT_command_motor(&(quadmotors->motors[j].tim), speed);
+          else
+            DSHOT_command_motor(&(quadmotors->motors[j].tim), MIN_THROTTLE);
+        }
+        speed += 5;
+        HAL_Delay(5);
+      }
+      speed = MAX_THROTTLE/2;
 
+      while (speed > MIN_THROTTLE)
+      {
+        for (int j = 0; j < 4; j++)
+        {
+          if (i == j)
+            DSHOT_command_motor(&(quadmotors->motors[j].tim), speed);
+          else
+            DSHOT_command_motor(&(quadmotors->motors[j].tim), MIN_THROTTLE);
+        }
+        speed -= 5;
+        HAL_Delay(5);
+      }
+      speed = MIN_THROTTLE;
+    }
+
+    HAL_Delay(5);
+}
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+  check_buffer();
+}
+
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+
+}
 /* USER CODE END 4 */
 
 /**
