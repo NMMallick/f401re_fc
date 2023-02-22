@@ -11,17 +11,23 @@ void check_buffer()
 {
     offb_dtype->tx_buf[0] = GOOD_TX;
 
-    for (size_t i = 0; i < 9; i++)
-    {
-        if (offb_dtype->rx_buf[i] != 0xff)
-        {
-            offb_dtype->tx_buf[0] = BAD_TX;
-            break;
-        }
-    }
+    // motor_cmd((Motor_Scalars *)&offb_dtype->rx_buf);
+    // uint8_t valid = offb_dtype->rx_buf[RX_BUF_SIZE-1];
+    // uint8_t *pitchb = &offb_dtype->rx_buf[0];
 
-    // HAL_Delay(50);
-    HAL_UART_Transmit_DMA(offb_dtype->huart, (uint8_t *)offb_dtype->tx_buf, 1);
-    HAL_UART_Receive_DMA(offb_dtype->huart, (uint8_t *)offb_dtype->rx_buf, 9);
+    uint8_t *buf = &offb_dtype->rx_buf;
+
+    HAL_UART_Transmit_DMA(offb_dtype->huart, (uint8_t *)buf, 4);
+    HAL_UART_Receive_DMA(offb_dtype->huart, (uint8_t *)offb_dtype->rx_buf, RX_BUF_SIZE);
 }
+
+void motor_cmd(Motor_Scalars *motor_input)
+{
+    if (!motor_input->valid)
+    {
+        offb_dtype->tx_buf[0] = BAD_TX;
+        return;
+    }
+}
+
 // TODO

@@ -26,6 +26,7 @@ typedef struct {
     uint32_t channel;
 
     uint16_t buffer[MAX_BUFF_SIZE+2];
+
 } Motor_HandleTypeDef;
 
 /**
