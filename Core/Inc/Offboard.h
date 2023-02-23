@@ -12,8 +12,8 @@
 // - read
 // - write
 
-#define RX_BUF_SIZE 4
-#define TX_BUF_SIZE 1
+#define RX_BUF_SIZE 16
+#define TX_BUF_SIZE 16
 
 typedef struct {
     UART_HandleTypeDef *huart;
