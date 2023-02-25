@@ -9,7 +9,7 @@
 #define DSHOT_1 180
 
 #define DSHOT300_ARR 240 // 3.33 uS bit length (DSHOT 300)
-#define ARM_TIME 4000
+#define ARM_TIME 3000
 
 #define MAX_BUFF_SIZE 16
 

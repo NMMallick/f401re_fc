@@ -128,9 +128,9 @@ int main(void)
 
   // HAL_Delay(100);
   DSHOT_Init(&quadmotors);
-  Offboard_Init(&offb_dtype);
-
   DSHOT_Arm();
+  // Offboard_Init(&offb_dtype);
+
 
   /* USER CODE END 2 */
 
@@ -138,8 +138,9 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    DSHOT_Command_All_Motors();
-    HAL_Delay(1);
+    // DSHOT_Command_All_Motors();
+    motorDance(&quad_motors);
+    // HAL_Delay(1);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -496,39 +497,45 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 static void motorDance(QuadMotor_HandleTypeDef *quadmotors)
 {
-  // uint16_t speed = MIN_THROTTLE;
-  // for (int i = 0; i < 4; i++)
-  //   {
-  //     while (speed < (MAX_THROTTLE/2))
-  //     {
-  //       for (int j = 0; j < 4; j++)
-  //       {
-  //         if (i == j)
-  //           DSHOT_command_motor(&(quadmotors->motors[j].tim), speed);
-  //         else
-  //           DSHOT_command_motor(&(quadmotors->motors[j].tim), MIN_THROTTLE);
-  //       }
-  //       speed += 5;
-  //       HAL_Delay(5);
-  //     }
-  //     speed = MAX_THROTTLE/2;
+  uint16_t speed = MIN_THROTTLE;
+  for (int i = 0; i < 4; i++)
+    {
+      while (speed < (MAX_THROTTLE/2))
+      {
+        for (int j = 0; j < 4; j++)
+        {
+          if (i == j)
+            // DSHOT_command_motor(&(quadmotors->motors[j].tim), speed);
+            quadmotors->motors[j].speed = speed;
+          else
+            // DSHOT_command_motor(&(quadmotors->motors[j].tim), MIN_THROTTLE);
+            quadmotors->motors[j].speed = MIN_THROTTLE;
+        }
+        DSHOT_Command_All_Motors();
+        speed += 5;
+        HAL_Delay(5);
+      }
+      speed = MAX_THROTTLE/2;
 
-  //     while (speed > MIN_THROTTLE)
-  //     {
-  //       for (int j = 0; j < 4; j++)
-  //       {
-  //         if (i == j)
-  //           DSHOT_command_motor(&(quadmotors->motors[j].tim), speed);
-  //         else
-  //           DSHOT_command_motor(&(quadmotors->motors[j].tim), MIN_THROTTLE);
-  //       }
-  //       speed -= 5;
-  //       HAL_Delay(5);
-  //     }
-  //     speed = MIN_THROTTLE;
-  //   }
+      while (speed > MIN_THROTTLE)
+      {
+        for (int j = 0; j < 4; j++)
+        {
+          if (i == j)
+            // DSHOT_command_motor(&(quadmotors->motors[j].tim), speed);
+            quadmotors->motors[j].speed = speed;
+          else
+            // DSHOT_command_motor(&(quadmotors->motors[j].tim), MIN_THROTTLE);
+            quadmotors->motors[j].speed = MIN_THROTTLE;
+        }
+        DSHOT_Command_All_Motors();
+        speed -= 5;
+        HAL_Delay(5);
+      }
+      speed = MIN_THROTTLE;
+    }
 
-  //   HAL_Delay(5);
+    HAL_Delay(5);
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
