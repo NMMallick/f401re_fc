@@ -82,7 +82,7 @@ void DSHOT_Command_Motor(Motor_HandleTypeDef *motor)
 
     // Create the packet and begin the transmission
     DSHOT_Create_Packet(motor->speed, (uint16_t *)motor->buffer);
-    HAL_TIM_PWM_Start_DMA(motor->tim, motor->channel, (uint32_t *)motor->buffer, 18);
+    HAL_TIM_PWM_Start_DMA(motor->tim, motor->channel, (uint32_t *)motor->buffer, 17);
 }
 
 void DSHOT_Command_All_Motors()
@@ -90,6 +90,7 @@ void DSHOT_Command_All_Motors()
     for (int i = 0; i < NUM_MOTORS; i++)
     {
         DSHOT_Command_Motor(&quad_motors->motors[i]);
+        HAL_Delay(1);
     }
 }
 

@@ -126,10 +126,10 @@ int main(void)
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
 
-  // HAL_Delay(100);
+  HAL_Delay(100);
   DSHOT_Init(&quadmotors);
   DSHOT_Arm();
-  // Offboard_Init(&offb_dtype);
+  Offboard_Init(&offb_dtype);
 
 
   /* USER CODE END 2 */
@@ -510,10 +510,10 @@ static void motorDance(QuadMotor_HandleTypeDef *quadmotors)
           else
             // DSHOT_command_motor(&(quadmotors->motors[j].tim), MIN_THROTTLE);
             quadmotors->motors[j].speed = MIN_THROTTLE;
+          DSHOT_Command_All_Motors();
         }
-        DSHOT_Command_All_Motors();
         speed += 5;
-        HAL_Delay(5);
+        // HAL_Delay(5);
       }
       speed = MAX_THROTTLE/2;
 
@@ -527,21 +527,21 @@ static void motorDance(QuadMotor_HandleTypeDef *quadmotors)
           else
             // DSHOT_command_motor(&(quadmotors->motors[j].tim), MIN_THROTTLE);
             quadmotors->motors[j].speed = MIN_THROTTLE;
+          DSHOT_Command_All_Motors();
         }
-        DSHOT_Command_All_Motors();
         speed -= 5;
-        HAL_Delay(5);
+        // HAL_Delay(5);
       }
       speed = MIN_THROTTLE;
     }
 
-    HAL_Delay(5);
+    // HAL_Delay(5);
 }
 
-// void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-// {
-//   Offboard_Check_Buffer();
-// }
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+  Offboard_Check_Buffer();
+}
 
 // void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 // {
