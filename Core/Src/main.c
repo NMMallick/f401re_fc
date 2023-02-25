@@ -97,6 +97,7 @@ int main(void)
 
   // Set UART handle for offboard lib to reach
   offb_dtype.huart = &huart2;
+  offb_dtype.quad_motors = &quad_motors;
 
   /* USER CODE END 1 */
 

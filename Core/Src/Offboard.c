@@ -1,5 +1,4 @@
 #include "Offboard.h"
-static volatile int k = 0;
 
 void Offboard_Init(Offboard_TypeDef *dtype)
 {
@@ -13,7 +12,7 @@ void Offboard_Init(Offboard_TypeDef *dtype)
 
     for (int i = 0; i < NUM_MOTORS; i++)
     {
-        offb_dtype->quad_motors->motors[i].speed = 0x00;
+        offb_dtype->quad_motors->motors[i].speed = MIN_THROTTLE;
     }
 
     HAL_UART_Receive_DMA(offb_dtype->huart, offb_dtype->rx_buf, RX_BUF_SIZE);

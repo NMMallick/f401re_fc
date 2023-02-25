@@ -44,7 +44,7 @@ void DSHOT_Arm()
         HAL_TIM_PWM_Start_DMA(quad_motors->motors[2].tim, quad_motors->motors[2].channel, (uint32_t *)quad_motors->motors[2].buffer, 18);
         HAL_TIM_PWM_Start_DMA(quad_motors->motors[3].tim, quad_motors->motors[3].channel, (uint32_t *)quad_motors->motors[3].buffer, 18);
 
-        HAL_Delay(1);
+        // HAL_Delay(1);
     }
 }
 
