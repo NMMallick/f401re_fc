@@ -538,10 +538,10 @@ static void motorDance(QuadMotor_HandleTypeDef *quadmotors)
     HAL_Delay(5);
 }
 
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-  Offboard_Check_Buffer();
-}
+// void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+// {
+//   Offboard_Check_Buffer();
+// }
 
 // void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 // {
