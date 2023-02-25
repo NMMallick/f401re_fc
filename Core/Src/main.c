@@ -51,6 +51,8 @@ DMA_HandleTypeDef hdma_tim4_ch1;
 DMA_HandleTypeDef hdma_tim4_ch2;
 
 UART_HandleTypeDef huart2;
+DMA_HandleTypeDef hdma_usart2_tx;
+DMA_HandleTypeDef hdma_usart2_rx;
 
 /* USER CODE BEGIN PV */
 
@@ -124,8 +126,8 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   HAL_Delay(100);
-  DSHOT_init(&quadmotors);
-  DSHOT_arm();
+  DSHOT_Init(&quadmotors);
+  DSHOT_Arm();
   uint16_t speed = MIN_THROTTLE;
   /* USER CODE END 2 */
 
@@ -141,12 +143,13 @@ int main(void)
         for (int j = 0; j < 4; j++)
         {
           if (i == j)
-            DSHOT_command_motor(&(quadmotors.motors[j].tim), speed);
+            quad_motors->motors[j].speed = speed;
           else
-            DSHOT_command_motor(&(quadmotors.motors[j].tim), MIN_THROTTLE);
+            quad_motors->motors[j].speed = MIN_THROTTLE;
+            DSHOT_Command_All_Motors();
         }
         speed += 5;
-        HAL_Delay(5);
+        // HAL_Delay(5);
       }
       speed = MAX_THROTTLE/2;
 
@@ -155,17 +158,19 @@ int main(void)
         for (int j = 0; j < 4; j++)
         {
           if (i == j)
-            DSHOT_command_motor(&(quadmotors.motors[j].tim), speed);
+            // DSHOT_command_motor(&(quadmotors.motors[j]), speed);
+            quad_motors->motors[j].speed = speed;
           else
-            DSHOT_command_motor(&(quadmotors.motors[j].tim), MIN_THROTTLE);
+            quad_motors->motors[j].speed = MIN_THROTTLE;
+          DSHOT_Command_All_Motors();
         }
         speed -= 5;
-        HAL_Delay(5);
+        // HAL_Delay(5);
       }
       speed = MIN_THROTTLE;
     }
-  
-    HAL_Delay(5);
+
+    // HAL_Delay(5);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -475,6 +480,12 @@ static void MX_DMA_Init(void)
   /* DMA1_Stream3_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Stream3_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream3_IRQn);
+  /* DMA1_Stream5_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream5_IRQn);
+  /* DMA1_Stream6_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream6_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream6_IRQn);
   /* DMA1_Stream7_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Stream7_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream7_IRQn);

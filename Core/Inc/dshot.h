@@ -25,6 +25,7 @@ typedef struct {
     uint32_t channel;
 
     uint16_t buffer[MAX_BUFF_SIZE+2];
+    uint16_t speed;
 } Motor_HandleTypeDef;
 
 /**
@@ -41,7 +42,7 @@ QuadMotor_HandleTypeDef *quad_motors;
  * @brief Initialisation function for the timing and packet
  *          buffer needed for the dshot protocol
  */
-void DSHOT_init(QuadMotor_HandleTypeDef *motors);
+void DSHOT_Init(QuadMotor_HandleTypeDef *motors);
 
 /**
  * @brief Arming sequence for the BHEli_S ESC
@@ -49,14 +50,14 @@ void DSHOT_init(QuadMotor_HandleTypeDef *motors);
  *          this function has finished else the motors will
  *          not be armed.
  */
-void DSHOT_arm();
+void DSHOT_Arm();
 
 /**
  * @brief Create a packet of buffer data that prescribes todo
  *          the dshot 300 protocol
  * @param the throttle value to be sent to the ESC
  */
-void DSHOT_create_packet(uint16_t val, uint16_t *buf);
+void DSHOT_Create_Packet(uint16_t val, uint16_t *buf);
 
 /**
  * @brief Read from DMA and create the PWM signal
@@ -64,6 +65,8 @@ void DSHOT_create_packet(uint16_t val, uint16_t *buf);
  * @param val Throttle value to be sent to the ESC/motor
  * @note val is clamped at THROTTLE_MIN and THROTTLE_MAX
  */
-void DSHOT_command_motor(Motor_HandleTypeDef *motor, uint16_t val);
+void DSHOT_Command_Motor(Motor_HandleTypeDef *motor);
+
+void DSHOT_Command_All_Motors();
 
 #endif
