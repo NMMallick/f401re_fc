@@ -56,6 +56,7 @@ DMA_HandleTypeDef hdma_usart2_tx;
 DMA_HandleTypeDef hdma_usart2_rx;
 
 /* USER CODE BEGIN PV */
+QuadMotor_HandleTypeDef qm;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -97,8 +98,8 @@ int main(void)
 
   // Set UART handle for offboard lib to reach
   offb_dtype.huart = &huart2;
-  offb_dtype.quad_motors = &quad_motors;
-
+  offb_dtype.quad_motors = &quad_motors->motors;
+  qm = quadmotors;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -129,21 +130,24 @@ int main(void)
   HAL_Delay(100);
   DSHOT_Init(&quadmotors);
   DSHOT_Arm();
-  Offboard_Init(&offb_dtype);
+  HAL_Delay(10);
+  Offboard_Init(&offb_dtype, &quad_motors->motors);
 
+  for (int i = 0; i < 4; i++)
+    quadmotors.motors[i].speed = MIN_THROTTLE;
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  // uint16_t speed = MIN_THROTTLE;
   while (1)
   {
-    // DSHOT_Command_All_Motors();
-    motorDance(&quad_motors);
     // HAL_Delay(1);
+    DSHOT_Command_All_Motors();
     /* USER CODE END WHILE */
-
     /* USER CODE BEGIN 3 */
+
   }
   /* USER CODE END 3 */
 }
@@ -535,12 +539,12 @@ static void motorDance(QuadMotor_HandleTypeDef *quadmotors)
       speed = MIN_THROTTLE;
     }
 
-    // HAL_Delay(5);
+//     // HAL_Delay(5);
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-  Offboard_Check_Buffer();
+  Offboard_Check_Buffer(qm.motors);
 }
 
 // void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)

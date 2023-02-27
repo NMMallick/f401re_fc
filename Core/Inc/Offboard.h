@@ -18,13 +18,14 @@
 
 typedef struct {
     UART_HandleTypeDef *huart;
-    QuadMotor_HandleTypeDef *quad_motors;
+    Motor_HandleTypeDef *quad_motors;
 
     uint8_t tx_buf[TX_BUF_SIZE],
             rx_buf[RX_BUF_SIZE];
 } Offboard_TypeDef;
 
 Offboard_TypeDef *offb_dtype;
+Motor_HandleTypeDef *motors;
 
 typedef struct __attribute__((__packed__))
 {
@@ -44,9 +45,9 @@ typedef enum {
 // What process do I want for initializing
 //  this process ?
 // - handshake?
-void Offboard_Init(Offboard_TypeDef *);
+void Offboard_Init(Offboard_TypeDef *, Motor_HandleTypeDef *);
 void Offboard_Check_Buffer();
-void cmd_motors(Motor_Scalars *);
+void set_motor_speed(Motor_Scalars *);
 
 
 #endif

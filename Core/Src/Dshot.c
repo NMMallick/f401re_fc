@@ -87,7 +87,7 @@ void DSHOT_Command_Motor(Motor_HandleTypeDef *motor)
 
 void DSHOT_Command_All_Motors()
 {
-    for (int i = 0; i < NUM_MOTORS; i++)
+    for (int i = 0; i < 4; i++)
     {
         DSHOT_Command_Motor(&quad_motors->motors[i]);
         HAL_Delay(1);
