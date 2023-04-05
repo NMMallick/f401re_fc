@@ -48,7 +48,6 @@ typedef struct {
 
 } LSM6DS33_TypeDef;
 
-
 //
 //// FUNCTION HEADERS //
 void LSM6DS33_init();

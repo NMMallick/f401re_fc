@@ -1,7 +1,7 @@
-#include "dshot.h"
+#include "Dshot.h"
 
 //
-void DSHOT_init(QuadMotor_HandleTypeDef *motors)
+void DSHOT_Init(QuadMotor_HandleTypeDef *motors)
 {
     quad_motors = motors;
 
@@ -25,13 +25,13 @@ void DSHOT_init(QuadMotor_HandleTypeDef *motors)
     motors->motors[3].buffer[17] = 0x00;
 }
 
-void DSHOT_arm()
+void DSHOT_Arm()
 {
     // Creating packet info with throttle field value of 0x00
-    DSHOT_create_packet(0, (uint16_t *)quad_motors->motors[0].buffer);
-    DSHOT_create_packet(0, (uint16_t *)quad_motors->motors[1].buffer);
-    DSHOT_create_packet(0, (uint16_t *)quad_motors->motors[2].buffer);
-    DSHOT_create_packet(0, (uint16_t *)quad_motors->motors[3].buffer);
+    DSHOT_Create_Packet(0, (uint16_t *)quad_motors->motors[0].buffer);
+    DSHOT_Create_Packet(0, (uint16_t *)quad_motors->motors[1].buffer);
+    DSHOT_Create_Packet(0, (uint16_t *)quad_motors->motors[2].buffer);
+    DSHOT_Create_Packet(0, (uint16_t *)quad_motors->motors[3].buffer);
 
     // We will send 0x00 to each ESC for about 3 seconds
     uint32_t millis = HAL_GetTick();
@@ -48,7 +48,7 @@ void DSHOT_arm()
     }
 }
 
-void DSHOT_create_packet(uint16_t val, uint16_t *buf)
+void DSHOT_Create_Packet(uint16_t val, uint16_t *buf)
 {
     // Disable telemetry bit
     val = (val << 1) & 0xfffe;
@@ -71,18 +71,27 @@ void DSHOT_create_packet(uint16_t val, uint16_t *buf)
     }
 }
 
-void DSHOT_command_motor(Motor_HandleTypeDef *motor, uint16_t val)
+void DSHOT_Command_Motor(Motor_HandleTypeDef *motor)
 {
     // Clamp the motor speed
-    if (val < MIN_THROTTLE)
-        val = MIN_THROTTLE;
+    if (motor->speed < MIN_THROTTLE)
+        motor->speed = MIN_THROTTLE;
 
-    if (val > MAX_THROTTLE)
-        val = MAX_THROTTLE;
+    if (motor->speed > MAX_THROTTLE)
+        motor->speed = MAX_THROTTLE;
 
-    // Create the packet and begin the tnansmission
-    DSHOT_create_packet(val, (uint16_t *)motor->buffer);
+    // Create the packet and begin the transmission
+    DSHOT_Create_Packet(motor->speed, (uint16_t *)motor->buffer);
     HAL_TIM_PWM_Start_DMA(motor->tim, motor->channel, (uint32_t *)motor->buffer, 17);
+}
+
+void DSHOT_Command_All_Motors()
+{
+    for (int i = 0; i < 4; i++)
+    {
+        DSHOT_Command_Motor(&quad_motors->motors[i]);
+        HAL_Delay(1);
+    }
 }
 
 
