@@ -24,6 +24,7 @@
 #include "LSM6DS33_drivers.h"
 #include "Dshot.h"
 #include "Offboard.h"
+#include "Ekf.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

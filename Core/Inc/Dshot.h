@@ -38,7 +38,7 @@ typedef struct {
     Motor_HandleTypeDef motors[4];
 } QuadMotor_HandleTypeDef;
 
-QuadMotor_HandleTypeDef *quad_motors;
+static QuadMotor_HandleTypeDef *quad_motors;
 
 /**
  * @brief Initialisation function for the timing and packet

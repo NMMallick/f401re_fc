@@ -5,8 +5,8 @@
  *      Author: nate
  */
 
-#ifndef INC_LSM6DS33_DRIVERS_H_
-#define INC_LSM6DS33_DRIVERS_H_
+#ifndef LSM6DS33_DRIVERS_H_
+#define LSM6DS33_DRIVERS_H_
 
 #include "stm32f4xx_hal.h"
 #include <math.h>

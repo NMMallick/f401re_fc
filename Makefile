@@ -64,7 +64,8 @@ Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c \
 Core/Src/system_stm32f4xx.c \
 Core/Src/LSM6DS33_drivers.c \
 Core/Src/Dshot.c \
-Core/Src/Offboard.c
+Core/Src/Offboard.c \
+Core/Src/Ekf.c
 
 # ASM sources
 ASM_SOURCES =  \

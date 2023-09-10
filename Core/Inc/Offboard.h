@@ -24,8 +24,8 @@ typedef struct {
             rx_buf[RX_BUF_SIZE];
 } Offboard_TypeDef;
 
-Offboard_TypeDef *offb_dtype;
-Motor_HandleTypeDef *motors;
+static Offboard_TypeDef *offb_dtype;
+static Motor_HandleTypeDef *motors;
 
 typedef struct __attribute__((__packed__))
 {
