@@ -1,4 +1,5 @@
 #include "Ekf.h"
+#include <cmatrix/core.h>
 
 void to_quarternion(Attitude_TypeDef *att)
 {

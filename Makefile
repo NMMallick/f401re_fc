@@ -65,7 +65,8 @@ Core/Src/system_stm32f4xx.c \
 Core/Src/LSM6DS33_drivers.c \
 Core/Src/Dshot.c \
 Core/Src/Offboard.c \
-Core/Src/Ekf.c
+Core/Src/Ekf.c \
+external/cmatrix/src/core.c
 
 # ASM sources
 ASM_SOURCES =  \
@@ -126,8 +127,8 @@ C_INCLUDES =  \
 -IDrivers/STM32F4xx_HAL_Driver/Inc \
 -IDrivers/STM32F4xx_HAL_Driver/Inc/Legacy \
 -IDrivers/CMSIS/Device/ST/STM32F4xx/Include \
--IDrivers/CMSIS/Include
-
+-IDrivers/CMSIS/Include \
+-Iexternal/cmatrix/include
 
 # compile gcc flags
 ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections

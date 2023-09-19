@@ -35,7 +35,7 @@ typedef struct Gyro_TypeDef
     double g_x,
 	g_y,
 	g_z;
-};
+} Gyro_TypeDef;
 
 /**
  * @brief Convert euler angles to quaternion
